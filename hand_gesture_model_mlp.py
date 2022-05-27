@@ -100,67 +100,6 @@ plt.show()
 
 
 
-# print(model.summary())
-
-# model = load_model("model_test.h5", compile=False)
-# model.save("./", save_format="tf")
-
-
-####################
-
-
-# k-nearest neighbor - 정확도 76%
-# dataset = pd.read_csv("hand_gesture_data/hand_gesture_data3.csv")
-#
-# x = dataset.iloc[:, :40].values
-# y = dataset.iloc[:, 40].values
-#
-# x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1)
-# s = StandardScaler()   # 특성 스케일링으로 평균이 0, 표준 편차가 1이 되도록 변환
-# x_train = s.fit_transform(x_train)
-# x_test = s.fit_transform(x_test)
-#
-# knn = KNeighborsClassifier(n_neighbors=50)
-# knn.fit(x_train, y_train)
-#
-# y_pred = knn.predict(x_test)
-# print("정확도 : {}".format(accuracy_score(y_test, y_pred)))
-
-
-####################
-
-
-# SVM - 정확도 91%
-# dataset = pd.read_csv("hand_gesture_data/hand_gesture_data3.csv")
-#
-# x = dataset.iloc[:, :40].values
-# y = dataset.iloc[:, 40].values
-# x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1)
-#
-# svm = svm.SVC(kernel="linear", C=1.0, gamma=0.5)
-# svm.fit(x_train, y_train)
-# y_pred = svm.predict(x_test)
-# print("정확도 : {}".format(accuracy_score(y_test, y_pred)))
-
-
-####################
-
-
-# Decision Tree - 정확도 90%
-# dataset = pd.read_csv("hand_gesture_data/hand_gesture_data3.csv")
-#
-# x = dataset.iloc[:, :40].values
-# y = dataset.iloc[:, 40].values
-#
-# x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1)
-#
-# model = tree.DecisionTreeClassifier()
-# model.fit(x_train, y_train)
-# y_pred = model.predict(x_test)
-# print("정확도 : {}".format(accuracy_score(y_test, y_pred)))
-
-
-
 
 
 
