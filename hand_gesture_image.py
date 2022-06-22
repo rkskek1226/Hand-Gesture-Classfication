@@ -7,7 +7,6 @@ from keras.models import load_model
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
-cap=cv2.VideoCapture(0)
 global arr
 arr = np.array([])
 model = load_model("model_test.h5")
@@ -29,8 +28,8 @@ def find_gradient(a1, a2, b1, b2):
 
 
 with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.5, min_tracking_confidence=0.7) as hands:
-    image = cv2.imread("50.jpg", cv2.IMREAD_COLOR)
-    print(image.dtype)
+    image = cv2.imread("5-3.jpg", cv2.IMREAD_COLOR)
+    # print(image.dtype)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = cv2.flip(image, 1)
     results = hands.process(image)
@@ -83,9 +82,13 @@ with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.5, min_tracking_
         tmp = model.predict(arr)
         predicted = np.argmax(tmp, axis=1)
         print(predicted)
+        image = cv2.resize(image, dsize=(600, 400), interpolation=cv2.INTER_LINEAR)
+        cv2.putText(image, str(predicted), (20, 90), cv2.FONT_HERSHEY_DUPLEX, 2, (0, 0, 255), 2, cv2.LINE_AA)
+        cv2.imshow("img", image)
+        cv2.imwrite("t5-2.jpg", image)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
         arr = np.array([])
 
-
-cap.release()
 
 

@@ -36,18 +36,16 @@ def find_angle(a1, a2, b1, b2):
     n2 = b2 - a2
 
 
-
-
 with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.5, min_tracking_confidence=0.7) as hands:
     while cap.isOpened():
-        success, image=cap.read()
+        success, image = cap.read()
         if not success:
             continue
 
-        image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image=cv2.flip(image, 1)
-        results=hands.process(image)
-        image=cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = cv2.flip(image, 1)
+        results = hands.process(image)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
@@ -55,7 +53,7 @@ with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.5, min_tracking_
 
         cv2.imshow('image', image)
 
-        if cv2.waitKey(1)==97:   # a키 입력
+        if cv2.waitKey(1) == 97:   # a키 입력
             for i in range(21):
                 f.write(str(int(hand_landmarks.landmark[i].x * 255)) + "," + str(int(hand_landmarks.landmark[i].y * 255)) + ",")
 
@@ -95,14 +93,14 @@ with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.5, min_tracking_
                     f.write(str(find_gradient(int(hand_landmarks.landmark[i].x * 255), int(hand_landmarks.landmark[i].y * 255),
                                               int(hand_landmarks.landmark[i + 1].x * 255), int(hand_landmarks.landmark[i + 1].y * 255))) + ",")
             f.write(str(find_gradient(int(hand_landmarks.landmark[17].x * 255), int(hand_landmarks.landmark[17].y * 255),
-                                      int(hand_landmarks.landmark[20].x * 255), int(hand_landmarks.landmark[20].y * 255))) + "," + str(n) +"\n")
+                                      int(hand_landmarks.landmark[20].x * 255), int(hand_landmarks.landmark[20].y * 255))) + "," + str(n) + "\n")
 
-            cv2.imwrite("imageData/"+str(n)+"/"+str(cnt)+".jpg",image)
+            cv2.imwrite("imageData/"+str(n)+"/"+str(cnt)+".jpg", image)
 
             print(cnt)
-            cnt+=1
+            cnt += 1
 
-        elif cv2.waitKey(1)==27:   # ESC키 입력시 종료
+        elif cv2.waitKey(1) == 27:   # ESC키 입력시 종료
             break
 
 
