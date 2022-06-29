@@ -4,6 +4,7 @@ import tensorflow_hub as hub
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, GlobalMaxPool2D, GlobalAveragePooling2D
 from keras.preprocessing.image import ImageDataGenerator
+import time, datetime
 from tensorflow.keras.applications import ResNet50
 
 
@@ -30,7 +31,7 @@ from tensorflow.keras.applications import ResNet50
 # loss = history.history["loss"]
 
 
-BATCH_SIZE = 5
+BATCH_SIZE = 2
 image_width = 640
 image_height = 480
 
@@ -45,7 +46,6 @@ test_generator = test.flow_from_directory("hand_gesture_data/data3/test/", targe
                                           color_mode="rgb", batch_size=BATCH_SIZE, seed=2, shuffle=True,
                                           class_mode="sparse")
 
-
 model = Sequential()
 model.add(Conv2D(32, (3, 3), padding="same", activation="relu", input_shape=(image_width, image_height, 3)))
 model.add(MaxPooling2D((2, 2), strides=2))
@@ -57,9 +57,36 @@ model.add(Dense(10, activation="softmax"))
 
 model.compile(loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
 
-train_history = model.fit(train_generator, epochs=10, verbose=2)
-test_history = model.evaluate(test_generator)
+start = time.time()
 
-model.save("model_cnn.h5")
+history = model.fit(train_generator, epochs=20, validation_data=test_generator, verbose=2)
+
+sec = time.time() - start
+time = str(datetime.timedelta(seconds=sec)).split(".")
+times = time[0]
+print("\ntime =", time)
+
+model.save("model_cnn_batch2_epoch20.h5")
+
+plt.subplot(211)
+plt.plot(history.history["accuracy"])
+plt.plot(history.history["val_accuracy"])
+plt.title("Accuracy")
+plt.xlabel("epoch")
+plt.ylabel("accuracy")
+plt.legend(["train", "validation"], loc="lower right")
+
+plt.subplot(212)
+plt.plot(history.history["loss"])
+plt.plot(history.history["val_loss"])
+plt.title("Loss")
+plt.xlabel("epoch")
+plt.ylabel("loss")
+plt.legend(["train", "validation"], loc="upper right")
+plt.tight_layout()
+plt.show()
+
+
+
 
 
