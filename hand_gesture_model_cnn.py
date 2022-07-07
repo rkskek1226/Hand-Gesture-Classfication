@@ -1,12 +1,9 @@
-import tensorflow as tf
+import datetime
+import time
 import matplotlib.pyplot as plt
-import tensorflow_hub as hub
+from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Resizing
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, GlobalMaxPool2D, GlobalAveragePooling2D
 from keras.preprocessing.image import ImageDataGenerator
-import time, datetime
-from tensorflow.keras.applications import ResNet50
-
 
 # model = Sequential([hub.KerasLayer("https://tfhub.dev/google/imagenet/resnet_v2_152/feature_vector/4",
 #                                    input_shape=(image_width, image_height, 3), trainable=False),
@@ -30,10 +27,11 @@ from tensorflow.keras.applications import ResNet50
 # accuracy = history.history["accuracy"]
 # loss = history.history["loss"]
 
+# 핸드폰 이미지 크기 width = 1080, height = 1440
 
 BATCH_SIZE = 2
-image_width = 640
-image_height = 480
+image_width = 180   # 크기도 줄이기
+image_height = 120
 
 train = ImageDataGenerator(rescale=1. / 255, rotation_range=10, width_shift_range=0.1,
                            height_shift_range=0.1, shear_range=0.1, zoom_range=0.1)
@@ -46,14 +44,19 @@ test_generator = test.flow_from_directory("hand_gesture_data/data3/test/", targe
                                           color_mode="rgb", batch_size=BATCH_SIZE, seed=2, shuffle=True,
                                           class_mode="sparse")
 
+
 model = Sequential()
-model.add(Conv2D(32, (3, 3), padding="same", activation="relu", input_shape=(image_width, image_height, 3)))
-model.add(MaxPooling2D((2, 2), strides=2))
-model.add(Conv2D(64, (3, 3), padding="same", activation="relu"))
-model.add(MaxPooling2D((2, 2), strides=2))
+# model.add(Resizing(256, 192))
+model.add(Conv2D(32, (27, 27), padding="same", activation="relu", input_shape=(image_width, image_height, 3)))
+model.add(MaxPooling2D((2, 2), strides=1))
+model.add(Conv2D(64, (27, 27), padding="same", activation="relu"))
+model.add(MaxPooling2D((2, 2), strides=1))
 model.add(Flatten())
 model.add(Dense(128, activation="relu"))
 model.add(Dense(10, activation="softmax"))
+
+# image resize layer 추가
+# 100~200 이미지 크기 변경
 
 model.compile(loss="sparse_categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
 
