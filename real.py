@@ -79,10 +79,9 @@ model.add(Activation("softmax"))
 
 
 model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
-history = model.fit(x_train, y_train, epochs=30, batch_size=200, validation_split=0.2)
+history = model.fit(x_train, y_train, epochs=60, batch_size=10, validation_split=0.2)
 print("Accuracy : {}".format(model.evaluate(x_test, y_test)[1]))
 
-############################# bn을 할꺼면 batch_size를 크게 해라
 
 plt.subplot(211)
 plt.plot(history.history["accuracy"])

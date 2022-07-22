@@ -1,0 +1,7 @@
+https://www.quora.com/What-is-the-difference-between-dropout-and-batch-normalization
+https://gaussian37.github.io/dl-concept-order_of_regularization_term/
+
+
+
+
+

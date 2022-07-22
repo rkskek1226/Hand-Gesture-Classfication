@@ -1,0 +1,29 @@
+dropout X
+bn O
+
+epoch=30, batch_size=50  -> 91%
+epoch=50, batch_size=50  -> 91%
+epoch=30, batch_size=100 -> 92%
+epoch=50, batch_size=100 -> 92%
+epoch=30, batch_size=200 -> 92%
+epoch=50, batch_size=200 -> 92%
+
+
+dropout X
+bn O
+
+epoch=30, batch_size=50  -> 90%
+epoch=30, batch_size=100 -> 91%
+epoch=30, batch_size=200 -> 90%
+
+
+
+
+
+
+
+
+
+
+
+
