@@ -1,6 +1,11 @@
-dropout X
-bn O
+dropout X, bn X
+epoch=30, batch_size=100 -> 90
+epoch=30, batch_size=200 -> 90
+epoch=50, batch_size=100 -> 92
+epoch=50, batch_size=200 -> 92
 
+
+dropout X, bn O
 epoch=30, batch_size=50  -> 91%
 epoch=50, batch_size=50  -> 91%
 epoch=30, batch_size=100 -> 92%
@@ -9,14 +14,15 @@ epoch=30, batch_size=200 -> 92%
 epoch=50, batch_size=200 -> 92%
 
 
-dropout X
-bn O
-
+dropout O, bn X
 epoch=30, batch_size=50  -> 90%
 epoch=30, batch_size=100 -> 91%
 epoch=30, batch_size=200 -> 90%
 
 
+dropout O, bn O
+epoch=30, batch_size=100 -> 81%
+epoch=30, batch_size=200 -> 81%
 
 
 
