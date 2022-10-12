@@ -22,6 +22,24 @@ from keras.layers import Input
 from keras.models import Model
 
 
+import datetime
+import time
+import matplotlib.pyplot as plt
+import tensorflow as tf
+import pandas as pd
+import numpy as np
+from keras.utils import np_utils
+from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Resizing, BatchNormalization, Activation, Dropout, GlobalAveragePooling2D, concatenate
+from keras.models import Sequential
+from google.colab import drive
+from tensorflow.keras.layers.experimental.preprocessing import Resizing, Rescaling
+from keras.preprocessing.image import ImageDataGenerator
+from sklearn.model_selection import train_test_split
+from keras.layers import Input
+from keras.models import Model
+from tensorflow.keras.utils import plot_model
+
+
 seed = 0
 np.random.seed(seed)
 tf.random.set_seed(seed)
@@ -30,30 +48,49 @@ batch_size = 32
 img_height = 480
 img_width = 640
 
-Data_set = pd.read_csv("hand_gesture_data/hand_gesture_data2.csv")
+Data_set = pd.read_csv("/content/gdrive/MyDrive/Colab Notebooks/qwer.csv")
 train_mlp_x_data = Data_set.iloc[:, 20:45].astype(float)
 train_mlp_y_data = Data_set.iloc[:, 45]
 
 train_mlp_y_data = np_utils.to_categorical(train_mlp_y_data)
 
-train_mlp_x_data, test_mlp_x_data, train_mlp_y_data, test_mlp_y_data = train_test_split(train_mlp_x_data, train_mlp_y_data, test_size=0.2, shuffle=True, stratify=train_mlp_y_data, random_state=1)
+# train_mlp_x_data, test_mlp_x_data, train_mlp_y_data, test_mlp_y_data = train_test_split(train_mlp_x_data, train_mlp_y_data, test_size=0.2, shuffle=True, stratify=train_mlp_y_data, random_state=1)
+# train_mlp_x_data, test_mlp_x_data, train_mlp_y_data, test_mlp_y_data = train_test_split(train_mlp_x_data, train_mlp_y_data, shuffle=True, random_state=1)
 
+
+# train_cnn_data = ImageDataGenerator(rescale=1. / 255, rotation_range=50, width_shift_range=0.6,
+#                             height_shift_range=0.6, shear_range=0.6, zoom_range=0.6, horizontal_flip=True, vertical_flip=True, validation_split=0.2)
 
 train_cnn_data = ImageDataGenerator(rescale=1. / 255, rotation_range=50, width_shift_range=0.6,
-                           height_shift_range=0.6, shear_range=0.6, zoom_range=0.6, horizontal_flip=True, vertical_flip=True, validation_split=0.2)
+                            height_shift_range=0.6, shear_range=0.6, zoom_range=0.6, horizontal_flip=True, vertical_flip=True)
 
-train_cnn_x_data, train_cnn_y_data = train_cnn_data.flow_from_directory("/content/gdrive/MyDrive/Colab Notebooks/data2/", target_size=(img_height, img_width),
-                                            color_mode="rgb", batch_size=batch_size, seed=1, shuffle=True,
-                                            class_mode="categorical", subset="training")
 
-test_cnn_data = ImageDataGenerator(rescale=1. / 255, validation_split=0.2)
-test_cnn_x_data, test_cnn_y_data = test_cnn_data.flow_from_directory("/content/gdrive/MyDrive/Colab Notebooks/data2/", target_size=(img_height, img_width),
-                                          color_mode="rgb", batch_size=batch_size, seed=2, shuffle=True,
-                                          class_mode="categorical", subset="validation")
+# train_cnn_data = train_cnn_data.flow_from_directory("/content/gdrive/MyDrive/Colab Notebooks/data2/", target_size=(img_height, img_width),
+#                                             color_mode="rgb", batch_size=batch_size, seed=1, shuffle=True, class_mode="categorical", subset="training")
+tmp = train_cnn_data.flow_from_directory("/content/gdrive/MyDrive/Colab Notebooks/data2/", target_size=(img_height, img_width),
+                                            color_mode="rgb", batch_size=batch_size, seed=1, shuffle=False, class_mode="categorical")
+
+# test_cnn_data = ImageDataGenerator(rescale=1. / 255, validation_split=0.2)
+# test_cnn_data = test_cnn_data.flow_from_directory("/content/gdrive/MyDrive/Colab Notebooks/data2/", target_size=(img_height, img_width),
+#                                         color_mode="rgb", batch_size=batch_size, seed=2, shuffle=True,
+#                                          class_mode="categorical", subset="validation")
+
+# train_cnn_data = tf.keras.utils.image_dataset_from_directory("/content/gdrive/MyDrive/Colab Notebooks/data2/", labels="inferred", batch_size=batch_size, image_size=(img_height, img_width), shuffle=False, seed=1)
+
+data_list = []
+batch_index = 0
+
+while batch_index <= tmp.batch_index:
+    data = tmp.next()
+    data_list.append(data[0])
+    batch_index += 1
+
+
+train_cnn_data = np.asarray(train_cnn_data)
 
 
 # MLP~~~~~~~~~~~~~~~~~~~~
-mlp_input = Input(shape=(25, ), batch_size=85)
+mlp_input = Input(shape=(25, ), batch_size=32, name="mlp_input")
 mlp_hidden1 = Dense(64)(mlp_input)
 mlp_hidden1 = BatchNormalization()(mlp_hidden1)
 mlp_hidden1 = Activation("relu")(mlp_hidden1)
@@ -85,13 +122,13 @@ mlp_hidden6 = Activation("relu")(mlp_hidden6)
 mlp_hidden6 = Dropout(0.25)(mlp_hidden6)
 
 # mlp_output = Dense(10, activation="softmax")(mlp_hidden6)
-mlp_output = Dense(40)(mlp_hidden6)
+mlp_output = Dense(40, name="mlp_output")(mlp_hidden6)
 
 mlp_model = Model(inputs=mlp_input, outputs=mlp_output)
 
 
 # CNN~~~~~~~~~~~~~~~~~~~~
-cnn_input = tf.keras.Input((img_height, img_width, 3))
+cnn_input = tf.keras.Input((img_height, img_width, 3), name="cnn_input")
 # conv_1
 conv1 = Conv2D(64, (7, 7), padding="same", strides=2)(cnn_input)
 conv1 = BatchNormalization()(conv1)
@@ -300,10 +337,10 @@ conv5_3 = Activation("relu")(conv5_3)
 
 avg_pool = GlobalAveragePooling2D()(conv5_3)
 flat = Flatten()(avg_pool)
-# cnn_output = Dense(10, activation="softmax")(flat)
-cnn_output = Dense(40)(flat)
+# cnn_output = Dense(10, activsation="softmax")(flat)
+cnn_output = Dense(40, name="cnn_output")(flat)
 
-cnn_model = Model(input=cnn_input, outputs=cnn_output)
+cnn_model = Model(inputs=cnn_input, outputs=cnn_output)
 
 
 concatenated = concatenate([mlp_output, cnn_output])
@@ -313,7 +350,23 @@ concat_output = Dense(10, activation="softmax")(concatenated)
 model = Model(inputs=[mlp_input, cnn_input], outputs=concat_output)
 
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
-model.fit([train_mlp_x_data, train_cnn_data], [train_mlp_y_data, train_cnn_y_data], epochs=20, verbose=2)
+
+
+# train_mlp_x_data = np.asarray(train_mlp_x_data)
+# train_cnn_data = np.asarray(train_cnn_data)
+# rain_mlp_y_data = np.asarray(train_mlp_y_data)
+
+print("train_mlp_x_data :", len(train_mlp_x_data))
+print("train_mlp_x_data.shape :", train_mlp_x_data.shape)
+print("train_mlp_y_data :", len(train_mlp_y_data))
+print("train_mlp_y_data.shape :", train_mlp_y_data.shape)
+
+
+# model.fit([train_mlp_x_data, train_cnn_data], train_mlp_y_data, epochs=20, verbose=2)
+model.fit({"mlp_input": train_mlp_x_data, "cnn_input": train_cnn_data}, train_mlp_y_data, epochs=20, verbose=2)
+
+
+
 
 
 
